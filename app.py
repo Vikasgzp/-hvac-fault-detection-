@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+import traceback
 
 from tensorflow.keras.models import load_model
 
@@ -32,6 +33,9 @@ labels = {
     10: "Stuck"
 }
 
+# Expected number of features
+EXPECTED_FEATURES = 106
+
 
 @app.route("/")
 def home():
@@ -43,18 +47,18 @@ def predict():
 
     try:
 
-        # Check file
+        # Check uploaded file
         if "file" not in request.files:
             return jsonify({
                 "error": "No file uploaded"
-            })
+            }), 400
 
         file = request.files["file"]
 
         if file.filename == "":
             return jsonify({
                 "error": "No selected file"
-            })
+            }), 400
 
         # Save uploaded file
         filepath = os.path.join(
@@ -69,24 +73,45 @@ def predict():
 
         # Remove label column if exists
         if "label" in df.columns:
-            df_features = df.drop("label", axis=1)
-        else:
-            df_features = df
+            df = df.drop("label", axis=1)
+
+        # Validate feature count
+        if df.shape[1] != EXPECTED_FEATURES:
+
+            return jsonify({
+                "error": f"Expected {EXPECTED_FEATURES} features but got {df.shape[1]}"
+            }), 400
+
+        # Convert all columns to numeric
+        df = df.apply(
+            pd.to_numeric,
+            errors="coerce"
+        )
+
+        # Replace NaN values
+        df = df.fillna(0)
 
         # Scale features
-        scaled_features = scaler.transform(df_features)
+        scaled_features = scaler.transform(df)
 
         # Predict
-        predictions = model.predict(scaled_features)
+        predictions = model.predict(
+            scaled_features,
+            verbose=0
+        )
 
+        # Get predicted class IDs
         predicted_classes = np.argmax(
             predictions,
             axis=1
         )
 
-        # Convert IDs to labels
+        # Convert class IDs to labels
         predicted_labels = [
-            labels[int(cls)]
+            labels.get(
+                int(cls),
+                "Unknown"
+            )
             for cls in predicted_classes
         ]
 
@@ -95,6 +120,7 @@ def predict():
             np.max(predictions, axis=1) * 100
         )
 
+        # Build response
         results = []
 
         for i in range(len(predicted_labels)):
@@ -109,14 +135,18 @@ def predict():
             })
 
         return jsonify({
+            "success": True,
+            "total_rows": int(len(results)),
             "results": results
         })
 
     except Exception as e:
 
         return jsonify({
-            "error": str(e)
-        })
+            "success": False,
+            "error": str(e),
+            "trace": traceback.format_exc()
+        }), 500
 
 
 if __name__ == "__main__":
