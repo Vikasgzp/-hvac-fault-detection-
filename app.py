@@ -82,14 +82,34 @@ def predict():
                 "error": f"Expected {EXPECTED_FEATURES} features but got {df.shape[1]}"
             }), 400
 
+        # Replace problematic values
+        df = df.replace(
+            ["#######", "######", "inf", "-inf"],
+            np.nan
+        )
+
         # Convert all columns to numeric
         df = df.apply(
             pd.to_numeric,
             errors="coerce"
         )
 
+        # Replace infinite values
+        df = df.replace(
+            [np.inf, -np.inf],
+            np.nan
+        )
+
         # Replace NaN values
         df = df.fillna(0)
+
+        # Debugging logs
+        print("Shape:", df.shape)
+        print("NaN count:", df.isna().sum().sum())
+        print("Columns:", len(df.columns))
+
+        # Force float conversion
+        df = df.astype(float)
 
         # Scale features
         scaled_features = scaler.transform(df)
@@ -106,7 +126,7 @@ def predict():
             axis=1
         )
 
-        # Convert class IDs to labels
+        # Convert IDs to labels
         predicted_labels = [
             labels.get(
                 int(cls),
@@ -120,7 +140,7 @@ def predict():
             np.max(predictions, axis=1) * 100
         )
 
-        # Build response
+        # Build results
         results = []
 
         for i in range(len(predicted_labels)):
@@ -141,6 +161,8 @@ def predict():
         })
 
     except Exception as e:
+
+        print(traceback.format_exc())
 
         return jsonify({
             "success": False,
