@@ -138,7 +138,6 @@ Users can upload HVAC sensor CSV files directly through the web interface and re
 
 This project was developed as a collaborative academic project by:
 
-* Vikas Kushwaha
 * Nitish Kumar Mahto
 * Gugulothu Vijay
 * Harsh
@@ -157,18 +156,6 @@ This project was developed as a collaborative academic project by:
 
 **Minor Project under Bachelor of Technology (B.Tech)**
 
----
-
-## Author
-
-**Vikas Kushwaha**
-B.Tech, Computer Science & Engineering
-Dr. B. R. Ambedkar National Institute of Technology (NIT) Jalandhar
-
-### Connect
-
-* Hugging Face: https://huggingface.co/spaces/Vikasgzp/hvac-fault-detection/tree/main
-* LinkedIn: https://www.linkedin.com/in/vikasgzp
 
 ---
 
