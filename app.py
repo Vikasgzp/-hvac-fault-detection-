@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
-import traceback
 
 from tensorflow.keras.models import load_model
 
@@ -33,9 +32,6 @@ labels = {
     10: "Stuck"
 }
 
-# Expected number of features
-EXPECTED_FEATURES = 106
-
 
 @app.route("/")
 def home():
@@ -47,18 +43,18 @@ def predict():
 
     try:
 
-        # Check uploaded file
+        # Check file
         if "file" not in request.files:
             return jsonify({
                 "error": "No file uploaded"
-            }), 400
+            })
 
         file = request.files["file"]
 
         if file.filename == "":
             return jsonify({
                 "error": "No selected file"
-            }), 400
+            })
 
         # Save uploaded file
         filepath = os.path.join(
@@ -68,59 +64,26 @@ def predict():
 
         file.save(filepath)
 
-        # Read CSV
+        print("Step 1: Reading CSV")
         df = pd.read_csv(filepath)
 
-        # Remove label column if exists
+        print("Step 2: Dropping label")
         if "label" in df.columns:
             df = df.drop("label", axis=1)
 
-        # Validate feature count
-        if df.shape[1] != EXPECTED_FEATURES:
+        print("Step 3: Shape =", df.shape)
 
-            return jsonify({
-                "error": f"Expected {EXPECTED_FEATURES} features but got {df.shape[1]}"
-            }), 400
+        print("Step 4: Cleaning")
+        df = df.apply(pd.to_numeric, errors="coerce").fillna(0)
 
-        # Replace problematic values
-        df = df.replace(
-            ["#######", "######", "inf", "-inf"],
-            np.nan
-        )
-
-        # Convert all columns to numeric
-        df = df.apply(
-            pd.to_numeric,
-            errors="coerce"
-        )
-
-        # Replace infinite values
-        df = df.replace(
-            [np.inf, -np.inf],
-            np.nan
-        )
-
-        # Replace NaN values
-        df = df.fillna(0)
-
-        # Debugging logs
-        print("Shape:", df.shape)
-        print("NaN count:", df.isna().sum().sum())
-        print("Columns:", len(df.columns))
-
-        # Force float conversion
-        df = df.astype(float)
-
-        # Scale features
+        print("Step 5: Scaling")
         scaled_features = scaler.transform(df)
 
-        # Predict
-        predictions = model.predict(
-            scaled_features,
-            verbose=0
-        )
+        print("Step 6: Predicting")
+        predictions = model.predict(scaled_features, verbose=0)
 
-        # Get predicted class IDs
+        print("Step 7: Finished prediction")
+
         predicted_classes = np.argmax(
             predictions,
             axis=1
@@ -128,10 +91,7 @@ def predict():
 
         # Convert IDs to labels
         predicted_labels = [
-            labels.get(
-                int(cls),
-                "Unknown"
-            )
+            labels[int(cls)]
             for cls in predicted_classes
         ]
 
@@ -140,7 +100,6 @@ def predict():
             np.max(predictions, axis=1) * 100
         )
 
-        # Build results
         results = []
 
         for i in range(len(predicted_labels)):
@@ -155,20 +114,14 @@ def predict():
             })
 
         return jsonify({
-            "success": True,
-            "total_rows": int(len(results)),
             "results": results
         })
 
     except Exception as e:
 
-        print(traceback.format_exc())
-
         return jsonify({
-            "success": False,
-            "error": str(e),
-            "trace": traceback.format_exc()
-        }), 500
+            "error": str(e)
+        })
 
 
 if __name__ == "__main__":
