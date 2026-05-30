@@ -2,16 +2,21 @@
 
 ## Overview
 
-This project is an AI-powered HVAC (Heating, Ventilation, and Air Conditioning) Fault Detection System built using TensorFlow and Deep Learning.
+This project is an AI-powered HVAC (Heating, Ventilation, and Air Conditioning) Fault Detection System developed using TensorFlow and Deep Learning.
 
-The model analyzes HVAC sensor data and predicts potential faults in the system. Users can upload a CSV file containing sensor readings, and the application automatically predicts fault categories along with confidence scores.
+The model analyzes HVAC sensor data and predicts potential faults in HVAC systems. Users can upload a CSV file containing sensor readings, and the application automatically predicts fault categories along with confidence scores.
 
-The application is deployed using Gradio, making it easy to use through a web interface without requiring technical knowledge.
+The application is deployed using Gradio on Hugging Face Spaces, providing an easy-to-use web interface for real-time fault prediction.
 
 ---
-## Live Link
+
+## Live Demo
+
+🔗 **Hugging Face Space**
 https://huggingface.co/spaces/Vikasgzp/hvac-fault-detection
+
 ---
+
 ## Features
 
 * Upload HVAC sensor CSV files
@@ -20,6 +25,7 @@ https://huggingface.co/spaces/Vikasgzp/hvac-fault-detection
 * User-friendly Gradio interface
 * Deep Learning-based classification
 * Supports multiple HVAC fault categories
+* Real-time prediction results
 
 ---
 
@@ -64,6 +70,7 @@ hvac-fault-detection/
 * Pandas
 * NumPy
 * Gradio
+* Hugging Face Spaces
 
 ---
 
@@ -73,7 +80,8 @@ The uploaded CSV file must:
 
 * Contain HVAC sensor features used during training
 * Follow the same column structure as the training dataset
-* Contain only numerical feature columns
+* Contain numerical feature values
+* Have feature columns in the same order as the training data
 * The `label` column is optional and will be ignored if present
 
 ---
@@ -86,7 +94,7 @@ The system returns:
 * Confidence score (%)
 * Row-wise prediction results
 
-Example:
+### Example Output
 
 | Row | Prediction | Confidence (%) |
 | --- | ---------- | -------------- |
@@ -102,15 +110,15 @@ Example:
 * Task: Multi-Class Classification
 * Number of Classes: 11
 * Input: HVAC Sensor Data
-* Output: Fault Category Prediction
+* Output: HVAC Fault Category Prediction
 
 ---
 
 ## Deployment
 
-The application is deployed using Hugging Face Spaces with Gradio.
+The application is deployed on Hugging Face Spaces using Gradio.
 
-Users can upload a CSV file directly through the web interface and receive predictions instantly.
+Users can upload HVAC sensor CSV files directly through the web interface and receive fault predictions instantly.
 
 ---
 
@@ -118,36 +126,52 @@ Users can upload a CSV file directly through the web interface and receive predi
 
 * Interactive analytics dashboard
 * Fault visualization charts
+* Downloadable prediction reports
 * Batch prediction export
 * Real-time sensor monitoring
 * Advanced model explainability
-* API integration support
+* REST API integration
+
+---
+
+## Project Team
+
+This project was developed as a collaborative academic project by:
+
+* Vikas Kushwaha
+* Nitish Kumar Mahto
+* Gugulothu Vijay
+* Harsh
+* Harshdeep Singh
+* Harmanjot Kaur
+
+---
+
+## Institution
+
+**Dr. B. R. Ambedkar National Institute of Technology (NIT) Jalandhar**
+
+---
+
+## Academic Program
+
+**Minor Project under Bachelor of Technology (B.Tech)**
 
 ---
 
 ## Author
 
-Vikas Kushwaha
-
-B.Tech Computer Science & Engineering
+**Vikas Kushwaha**
+B.Tech, Computer Science & Engineering
 Dr. B. R. Ambedkar National Institute of Technology (NIT) Jalandhar
 
-## Team Members
+### Connect
 
-This project was developed as a collaborative academic project by:
+* Hugging Face: https://huggingface.co/spaces/Vikasgzp/hvac-fault-detection/tree/main
+* LinkedIn: https://www.linkedin.com/in/vikasgzp
 
-Vikas Kushwaha
-Nitish Kumar Mahto
-Gugulothu Vijay
-Harsh
-Harshdeep Singh
-Harmanjot Kaur
-
-Institution
-Dr. B. R. Ambedkar National Institute of Technology (NIT) Jalandhar
-
-Program
-Minor Project under Bachelor of Technology (B.Tech) 
 ---
-Live on Hugging Face: https://huggingface.co/spaces/Vikasgzp/hvac-fault-detection
-LinkedIn: https://www.linkedin.com/in/vikasgzp
+
+## License
+
+This project is intended for academic, educational, and research purposes.
